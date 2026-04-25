@@ -290,14 +290,17 @@ namespace TX.Framework.WindowUI.Controls {
             }
 
             Rectangle bounds = e.Bounds;
-            ListViewItemStates itemState = e.ItemState;
+            // 使用 ListViewItem.Selected 代替 e.ItemState，因为在某些环境下 e.ItemState 可能会包含不可靠的标志，
+            // 导致所有行被当作已选中。使用更可靠的 e.Item.Selected 来判断选中状态。
             Graphics g = e.Graphics;
             GDIHelper.InitializeGraphics(g);
             Blend blen = new Blend();
             blen.Positions = new float[] { 0f, 0.4f, 0.7f, 1f };
             blen.Factors = new float[] { 0f, 0.3f, 0.8f, 0.2f };
             Color c1, c2;
-            if ((itemState & ListViewItemStates.Selected) == ListViewItemStates.Selected) {
+            bool isSelected = e.Item != null && e.Item.Selected;
+
+            if (isSelected) {
                 c1 = this._SelectedBeginColor;
                 c2 = this._SelectedEndColor;
                 //使用全局皮肤色彩，注意选择文字需要反色处理
@@ -334,7 +337,7 @@ namespace TX.Framework.WindowUI.Controls {
             Rectangle rect = e.Bounds;
             rect.X += 2;
             rect.Width -= 4;
-            Color c = (e.ItemState & ListViewItemStates.Selected) == ListViewItemStates.Selected ?
+            Color c = (e.Item != null && e.Item.Selected) ?
                 Color.White : e.SubItem.ForeColor;
             TextRenderer.DrawText(g, e.SubItem.Text, this._Font, rect, c, flags);
         }
