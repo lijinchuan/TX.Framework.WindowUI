@@ -337,7 +337,9 @@ namespace TX.Framework.WindowUI.Controls {
             Rectangle rect = e.Bounds;
             rect.X += 2;
             rect.Width -= 4;
-            Color c = (e.Item != null && e.Item.Selected) ?
+            // 仅当该行被选中且 ListView 拥有焦点时，使用白色文字以便与高亮背景对比；
+            // 否则使用子项原始前景色，避免在失去焦点时白色文字难以辨认的问题。
+            Color c = (e.Item != null && e.Item.Selected && this.Focused) ?
                 Color.White : e.SubItem.ForeColor;
             TextRenderer.DrawText(g, e.SubItem.Text, this._Font, rect, c, flags);
         }
@@ -380,7 +382,8 @@ namespace TX.Framework.WindowUI.Controls {
 
             textRect.X += offset;
             textRect.Width -= offset * 2;
-            Color c = (e.ItemState & ListViewItemStates.Selected) == ListViewItemStates.Selected ?
+            // 首列的文字颜色处理与其它列保持一致：只有在该行被选中且 ListView 拥有焦点时才使用白色文字
+            Color c = (e.Item != null && e.Item.Selected && this.Focused) ?
                 Color.White : e.SubItem.ForeColor;
             TextRenderer.DrawText(g, e.SubItem.Text, this._Font, textRect, c, flags);
         }
